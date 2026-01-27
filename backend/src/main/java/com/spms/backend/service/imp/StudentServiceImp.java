@@ -1,5 +1,7 @@
 package com.spms.backend.service.imp;
 
+import com.spms.backend.dto.StudentRequest;
+import com.spms.backend.exception.ResourceNotFoundException;
 import com.spms.backend.model.Student;
 import com.spms.backend.repository.StudentRepository;
 import com.spms.backend.service.StudentService;
@@ -15,8 +17,15 @@ public class StudentServiceImp implements StudentService {
         this.studentRepository = studentRepository;
     }
     @Override
-    public Student createStudent(Student student){
-        return studentRepository.save(student);
+    public Student createStudent(StudentRequest request){
+        Student stu= new Student(
+                request.getName(),
+                request.getEmail(),
+                request.getCourse(),
+                request.getGpa()
+        );
+        return studentRepository.save(stu);
+
     }
     @Override
     public List<Student> getAllStudent(){
@@ -25,17 +34,17 @@ public class StudentServiceImp implements StudentService {
     }
     @Override
     public Student getStudentById(Long id){
-        return studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found"));
+        return studentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Student not found"));
 
     }
 
     @Override
-    public Student update(Long id, Student student){
+    public Student update(Long id, StudentRequest request){
         Student existing= getStudentById(id);
-        existing.setName(student.getName());
-        existing.setEmail(student.getEmail());
-        existing.setGpa(student.getGpa());
-        existing.setCourse(student.getCourse());
+        existing.setName(request.getName());
+        existing.setEmail(request.getEmail());
+        existing.setGpa(request.getGpa());
+        existing.setCourse(request.getCourse());
         return studentRepository.save(existing);
     }
 
