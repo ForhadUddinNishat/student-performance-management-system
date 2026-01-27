@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: spms-backend
+
+  profiles:
+    active: dev

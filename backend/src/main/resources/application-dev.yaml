@@ -1,22 +1,9 @@
 spring:
-  application:
-    name: spms-backend
-
   datasource:
     url: jdbc:postgresql://localhost:5432/spms_db
     username: spms_user
     password: spms_pass
-    driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: true
-    open-in-view: false
-
-  sql:
-    init:
-      mode: never
-
-server:
-  port: 8080
