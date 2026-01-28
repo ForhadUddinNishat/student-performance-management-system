@@ -9,10 +9,16 @@ import java.util.List;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
+    // Search ONLY (used by /search endpoint)
+    List<Student> findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+            String name,
+            String email
+    );
+
+    // Search + Pagination (used by main GET)
     Page<Student> findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
             String name,
             String email,
             Pageable pageable
     );
-
 }
