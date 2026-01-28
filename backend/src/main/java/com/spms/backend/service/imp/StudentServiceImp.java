@@ -5,7 +5,12 @@ import com.spms.backend.exception.ResourceNotFoundException;
 import com.spms.backend.model.Student;
 import com.spms.backend.repository.StudentRepository;
 import com.spms.backend.service.StudentService;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 
 import java.util.List;
 
@@ -25,16 +30,15 @@ public class StudentServiceImp implements StudentService {
                 request.getGpa()
         );
         return studentRepository.save(stu);
-
     }
     @Override
-    public List<Student> getAllStudent(){
+    public List<Student> getAllStudent() {
         return studentRepository.findAll();
-
     }
+
     @Override
     public Student getStudentById(Long id){
-        return studentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+        return studentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Student not found with id "+id));
 
     }
 
@@ -51,4 +55,16 @@ public class StudentServiceImp implements StudentService {
     public void delete(Long id){
         studentRepository.deleteById(id);
     }
+
+
+    public Page<Student> getStudents(String search, int page, int size, String sortBy){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        if(search == null || search.isBlank()){
+            return studentRepository.findAll(pageable);
+        }
+        return studentRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(search, search, pageable);
+    };
+
+
+
 }
