@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/students")
+@CrossOrigin(origins = "*")
 public class StudentController {
 
     private final StudentService studentService;
@@ -20,7 +21,6 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    // CREATE
     @PostMapping
     public ResponseEntity<StudentResponse> create(@Valid @RequestBody StudentRequest request) {
         return ResponseEntity.ok(studentService.createStudent(request));
@@ -50,7 +50,6 @@ public class StudentController {
         return ResponseEntity.ok(studentService.getStudentById(id));
     }
 
-    // UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<StudentResponse> update(
             @PathVariable Long id,
@@ -58,8 +57,6 @@ public class StudentController {
     ) {
         return ResponseEntity.ok(studentService.update(id, request));
     }
-
-    // DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         studentService.delete(id);
