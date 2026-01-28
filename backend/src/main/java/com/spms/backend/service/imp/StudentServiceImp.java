@@ -1,6 +1,7 @@
 package com.spms.backend.service.imp;
 
 import com.spms.backend.dto.StudentRequest;
+import com.spms.backend.dto.StudentResponse;
 import com.spms.backend.exception.ResourceNotFoundException;
 import com.spms.backend.model.Student;
 import com.spms.backend.repository.StudentRepository;
@@ -18,33 +19,43 @@ public class StudentServiceImp implements StudentService {
     public StudentServiceImp(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
+    private StudentResponse map(Student s){
+        return new StudentResponse(
+                s.getId(),
+                s.getName(),
+                s.getEmail(),
+                s.getCourse(),
+                s.getGpa()
+        );
+    }
 
     @Override
-    public Student createStudent(StudentRequest request) {
+    public StudentResponse createStudent(StudentRequest request) {
         Student student = new Student(
                 request.getName(),
                 request.getEmail(),
                 request.getCourse(),
                 request.getGpa()
         );
-        return studentRepository.save(student);
+        return map(studentRepository.save(student));
     }
 
     @Override
-    public Student getStudentById(Long id) {
-        return studentRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Student not found with id " + id));
+    public StudentResponse getStudentById(Long id) {
+        Student s =studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id " + id));
+        return map(s);
     }
 
     @Override
-    public Student update(Long id, StudentRequest request) {
-        Student existing = getStudentById(id);
+    public StudentResponse update(Long id, StudentRequest request) {
+        Student existing = studentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+
         existing.setName(request.getName());
         existing.setEmail(request.getEmail());
         existing.setCourse(request.getCourse());
         existing.setGpa(request.getGpa());
-        return studentRepository.save(existing);
+        return map(studentRepository.save(existing));
     }
 
     @Override
@@ -52,24 +63,21 @@ public class StudentServiceImp implements StudentService {
         studentRepository.deleteById(id);
     }
 
-    // 🔥 Pagination + optional search
     @Override
-    public Page<Student> getStudents(String search, int page, int size, String sortBy) {
+    public Page<StudentResponse> getStudents(String search, int page, int size, String sortBy) {
+
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 
-        if (search == null || search.trim().isEmpty()) {
-            return studentRepository.findAll(pageable);
-        }
-
-        return studentRepository
-                .findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-                        search, search, pageable);
+        Page<Student> result= (search == null || search.isBlank()) ? studentRepository.findAll(pageable) :
+                studentRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(search, search, pageable);
+        return result.map(this::map);
     }
 
     // 🔍 Search ONLY (NO findAll fallback)
     @Override
-    public List<Student> search(String query) {
+    public List<StudentResponse> search(String query) {
         return studentRepository
-                .findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query);
+                .findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query)
+                .stream().map(this::map).toList();
     }
 }

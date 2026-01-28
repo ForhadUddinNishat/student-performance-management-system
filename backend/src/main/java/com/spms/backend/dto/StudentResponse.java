@@ -1,13 +1,13 @@
 package com.spms.backend.dto;
 
 public class StudentResponse {
-    private long id;
+    private Long id;
     private String name;
     private String email;
     private String course;
     private double gpa;
 
-    public StudentResponse(long id, String name, String email, String course, double gpa) {
+    public StudentResponse(Long id, String name, String email, String course, double gpa) {
         this.id = id;
         this.name = name;
         this.email = email;

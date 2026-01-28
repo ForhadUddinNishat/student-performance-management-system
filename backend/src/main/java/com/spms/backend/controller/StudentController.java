@@ -1,8 +1,9 @@
 package com.spms.backend.controller;
 
 import com.spms.backend.dto.StudentRequest;
-import com.spms.backend.model.Student;
+import com.spms.backend.dto.StudentResponse;
 import com.spms.backend.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +22,12 @@ public class StudentController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<Student> create(@RequestBody StudentRequest request) {
+    public ResponseEntity<StudentResponse> create(@Valid @RequestBody StudentRequest request) {
         return ResponseEntity.ok(studentService.createStudent(request));
     }
 
-    // GET ALL + PAGINATION + SEARCH
     @GetMapping
-    public ResponseEntity<Page<Student>> getAll(
+    public ResponseEntity<Page<StudentResponse>> getAll(
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
@@ -38,23 +38,21 @@ public class StudentController {
         );
     }
 
-    // 🔍 SEARCH ONLY (FIXED — no conflict with /{id})
     @GetMapping("/search")
-    public ResponseEntity<List<Student>> search(
+    public ResponseEntity<List<StudentResponse>> search(
             @RequestParam("query") String query
     ) {
         return ResponseEntity.ok(studentService.search(query));
     }
 
-    // GET BY ID (must be AFTER /search)
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getById(@PathVariable Long id) {
+    public ResponseEntity<StudentResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(studentService.getStudentById(id));
     }
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Student> update(
+    public ResponseEntity<StudentResponse> update(
             @PathVariable Long id,
             @RequestBody StudentRequest request
     ) {

@@ -1,6 +1,7 @@
 package com.spms.backend.service;
 
 import com.spms.backend.dto.StudentRequest;
+import com.spms.backend.dto.StudentResponse;
 import com.spms.backend.model.Student;
 import org.springframework.data.domain.Page;
 
@@ -8,17 +9,15 @@ import java.util.List;
 
 public interface StudentService {
 
-    Student createStudent(StudentRequest request);
+    StudentResponse createStudent(StudentRequest request);
 
-    Student getStudentById(Long id);
+    StudentResponse getStudentById(Long id);
 
-    Student update(Long id, StudentRequest request);
+    StudentResponse update(Long id, StudentRequest request);
 
     void delete(Long id);
 
-    // Pagination + search
-    Page<Student> getStudents(String search, int page, int size, String sortBy);
+    Page<StudentResponse> getStudents(String search, int page, int size, String sortBy);
 
-    // Search ONLY
-    List<Student> search(String query);
+    List<StudentResponse> search(String query);
 }

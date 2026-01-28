@@ -2,9 +2,7 @@ package com.spms.backend.dto;
 
 import jakarta.validation.constraints.*;
 
-
 public class StudentRequest {
-
 
     @NotBlank(message = "Name is required")
     private String name;
